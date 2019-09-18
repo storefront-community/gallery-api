@@ -1,0 +1,39 @@
+version : 2.1
+default: &default
+  machine:
+    image: circleci/classic:latest
+jobs:
+  build:
+    <<: *default
+    steps:
+      - checkout
+      - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
+      - run: bash .sh/install.sh
+      - run: bash .sh/test.sh
+      - run: curl -s https://codecov.io/bash > ./codecov
+      - run: chmod +x ./codecov
+      - run: ./codecov -f "./src/Storefront.Gallery.Tests/coverage/opencover.xml" -t $CODECOV_TOKEN
+      - store_artifacts:
+          path: src/Storefront.Gallery.Tests/coverage/report/summary.htm
+          destination: coverage-report.htm
+  deploy:
+    <<: *default
+    steps:
+      - checkout
+      - run: echo "TODO> Build and push a Docker image"
+workflows:
+  version: 2.1
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v\d\.\d\.\d/
+            branches:
+              ignore: /.*/
