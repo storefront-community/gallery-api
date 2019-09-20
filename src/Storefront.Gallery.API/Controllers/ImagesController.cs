@@ -10,52 +10,52 @@ using Storefront.Gallery.API.Models.TransferModel;
 namespace Storefront.Gallery.API.Controllers
 {
     /// <summary>
-    /// Collection of pictures.
+    /// Collection of images.
     /// </summary>
     [Route("{galleryName:gallery}/{imageName}"), Authorize]
-    [ApiExplorerSettings(GroupName = "Pictures")]
-    public sealed class PicturesController : Controller
+    [ApiExplorerSettings(GroupName = "Images")]
+    public sealed class ImagesController : Controller
     {
         private readonly IFileStorage _fileStorage;
 
-        public PicturesController(IFileStorage fileStorage)
+        public ImagesController(IFileStorage fileStorage)
         {
             _fileStorage = fileStorage;
         }
 
         /// <summary>
-        /// Get picture in JPEG format.
+        /// Get image in JPEG format.
         /// </summary>
         /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
         /// Image size: **default** (720x480), **cover** (1920x1280) or **thumbnail** (64x48).
         /// </param>
-        /// <returns>Returns a picture.</returns>
+        /// <returns>Returns a image.</returns>
         /// <response code="200">Image file.</response>
         /// <response code="404">Error: PICTURE_NOT_FOUND</response>
         [HttpGet, Route("{imageSize:regex(^(default|cover|thumbnail)$)}")]
         [Produces("image/jpeg")]
         [ProducesResponseType(statusCode: 200)]
-        [ProducesResponseType(statusCode: 404, type: typeof(PictureNotFoundError))]
+        [ProducesResponseType(statusCode: 404, type: typeof(ImageNotFoundError))]
         public async Task<IActionResult> Get([FromRoute] string galleryName,
             [FromRoute] string imageName, [FromRoute] string imageSize)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new PictureGallery(_fileStorage);
+            var gallery = new ImageGallery(_fileStorage);
 
             await gallery.Load(tenantId, galleryName, imageName, imageSize);
 
-            if (gallery.PictureNotExists)
+            if (gallery.ImageNotExists)
             {
-                return new PictureNotFoundError();
+                return new ImageNotFoundError();
             }
 
-            return File(gallery.Picture.Stream, gallery.Picture.ContentType);
+            return File(gallery.Image.Stream, gallery.Image.ContentType);
         }
 
         /// <summary>
-        /// Add or update picture. Supports JPEG and PNG only.
+        /// Add or update image. Supports JPEG and PNG only.
         /// </summary>
         /// <param name="formData">Uploaded image using FormData.</param>
         /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
@@ -64,15 +64,15 @@ namespace Storefront.Gallery.API.Controllers
         /// Image size: **default** (720x480) or **cover** (1920x1280). The image will be converted to JPEG and resized.
         /// </param>
         /// <returns>No content.</returns>
-        /// <response code="204">Picture has been added or updated.</response>
+        /// <response code="204">Image has been added or updated.</response>
         [HttpPut, Route("{imageSize:regex(^(default|cover)$)}")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(statusCode: 204)]
-        public async Task<IActionResult> Save([FromForm] PictureFormData formData,
+        public async Task<IActionResult> Save([FromForm] ImageFormData formData,
             [FromRoute] string galleryName, [FromRoute] string imageName, [FromRoute] string imageSize)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new PictureGallery(_fileStorage);
+            var gallery = new ImageGallery(_fileStorage);
 
             using (var stream = new MemoryStream())
             {

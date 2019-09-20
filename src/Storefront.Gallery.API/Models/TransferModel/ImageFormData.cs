@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Storefront.Gallery.API.Models.TransferModel
 {
-    public sealed class PictureFormData
+    public sealed class ImageFormData
     {
         public const long Max5MB = 5242880;
 

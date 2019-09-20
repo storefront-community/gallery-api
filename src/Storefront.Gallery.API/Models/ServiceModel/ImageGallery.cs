@@ -5,25 +5,25 @@ using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 
 namespace Storefront.Gallery.API.Models.ServiceModel
 {
-    public sealed class PictureGallery
+    public sealed class ImageGallery
     {
         private readonly IFileStorage _fileStorage;
 
-        public PictureGallery(IFileStorage fileStorage)
+        public ImageGallery(IFileStorage fileStorage)
         {
             _fileStorage = fileStorage;
         }
 
-        public StoredFile Picture { get; private set; }
-        public bool PictureNotExists { get; private set; }
+        public StoredFile Image { get; private set; }
+        public bool ImageNotExists { get; private set; }
 
         public async Task Load(long tenantId, string galleryName, string imageName, string imageSize)
         {
-            var pictureName = PictureName(tenantId, galleryName, imageName, imageSize);
+            var imageFullQualifiedName = ImageName(tenantId, galleryName, imageName, imageSize);
 
-            Picture = await _fileStorage.Read(pictureName);
+            Image = await _fileStorage.Read(imageFullQualifiedName);
 
-            PictureNotExists = Picture == null;
+            ImageNotExists = Image == null;
         }
 
         public async Task Save(long tenantId, string galleryName, string imageName, string imageSize, Stream stream)
@@ -39,14 +39,14 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         {
             var saveDefault = _fileStorage.Save(new StoredFile
             {
-                Name = PictureName(tenantId, galleryName, imageName, "default"),
+                Name = ImageName(tenantId, galleryName, imageName, "default"),
                 ContentType = MediaTypeNames.Image.Jpeg,
                 Stream = new ImageCompress(stream).Optimize(720, 480, quality: 90)
             });
 
             var saveThumbnail = _fileStorage.Save(new StoredFile
             {
-                Name = PictureName(tenantId, galleryName, imageName, "thumbnail"),
+                Name = ImageName(tenantId, galleryName, imageName, "thumbnail"),
                 ContentType = MediaTypeNames.Image.Jpeg,
                 Stream = new ImageCompress(stream).Optimize(64, 48, quality: 20)
             });
@@ -58,13 +58,13 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         {
             await _fileStorage.Save(new StoredFile
             {
-                Name = PictureName(tenantId, galleryName, imageName, "cover"),
+                Name = ImageName(tenantId, galleryName, imageName, "cover"),
                 ContentType = MediaTypeNames.Image.Jpeg,
                 Stream = new ImageCompress(stream).Optimize(1920, 1280, quality: 90)
             });
         }
 
-        private string PictureName(long tenantId, string galleryName, string imageName, string imageSize)
+        private string ImageName(long tenantId, string galleryName, string imageName, string imageSize)
         {
             return $"{tenantId}-{galleryName}-{imageName}.{imageSize}.jpeg";
         }

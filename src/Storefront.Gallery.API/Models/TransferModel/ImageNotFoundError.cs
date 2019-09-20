@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Storefront.Gallery.API.Models.TransferModel
 {
-    public sealed class PictureNotFoundError : IActionResult
+    public sealed class ImageNotFoundError : IActionResult
     {
-        public PictureNotFoundError() { }
+        public ImageNotFoundError() { }
 
         public string Error { get; set; } = "PICTURE_NOT_FOUND";
 
