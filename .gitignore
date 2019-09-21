@@ -36,7 +36,7 @@ coverage/
 #######################
 # Configuration files #
 #######################
-appsettings.Development.json
+appsettings*.json
 ###################
 # Web publish log #
 ###################
