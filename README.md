@@ -13,6 +13,12 @@ This is a RESTful API developed with ASP.NET Core MVC using RabbitMQ as the even
 
 API documentation written with Swagger and available at the root URL (no route prefix).
 
+The API requires the native OS dependency `ligdiplus` to resize the images.
+
+```bash
+sudo apt-get install libgdiplus
+```
+
 ## Debug locally
 
 Before you start:

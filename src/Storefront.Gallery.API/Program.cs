@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Storefront.Gallery.API
 {
-    public class Program
+    [ExcludeFromCodeCoverage]
+    public sealed class Program
     {
         public static void Main(string[] args)
         {

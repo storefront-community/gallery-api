@@ -8,6 +8,8 @@ jobs:
     steps:
       - checkout
       - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
+      - run: sudo apt-get update
+      - run: sudo apt-get install libgdiplus
       - run: bash .sh/install.sh
       - run: bash .sh/test.sh
       - run: curl -s https://codecov.io/bash > ./codecov
