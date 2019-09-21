@@ -48,7 +48,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             {
                 Name = ImageName(tenantId, galleryName, imageName, "thumbnail"),
                 ContentType = MediaTypeNames.Image.Jpeg,
-                Stream = new ImageCompress(stream).Optimize(64, 48, quality: 20)
+                Stream = new ImageCompress(stream).Optimize(72, 48, quality: 20)
             });
 
             await Task.WhenAll(saveDefault, saveThumbnail);
