@@ -2,7 +2,11 @@
 
 Restaurant gallery to present dish pictures.
 
-This is a RESTful API developed with ASP.NET Core MVC using RabbitMQ as the event bus and Amazon S3 as the file storage.
+This is a RESTful API developed with
+[ASP.NET Core MVC](https://github.com/aspnet/AspNetCore) using
+[RabbitMQ](https://www.rabbitmq.com) as the event bus,
+[Amazon S3](https://aws.amazon.com/s3/) as the file storage and
+[Sentry](https://sentry.io) for error tracking.
 
 ## Status
 
