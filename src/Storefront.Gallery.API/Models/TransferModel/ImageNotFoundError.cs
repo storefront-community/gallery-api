@@ -7,7 +7,7 @@ namespace Storefront.Gallery.API.Models.TransferModel
     {
         public ImageNotFoundError() { }
 
-        public string Error { get; set; } = "PICTURE_NOT_FOUND";
+        public string Error { get; set; } = "IMAGE_NOT_FOUND";
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
