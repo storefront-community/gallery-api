@@ -15,17 +15,11 @@ namespace Storefront.Gallery.API.Constraints
         public bool Match(HttpContext httpContext, IRouter route, string routeKey,
             RouteValueDictionary values, RouteDirection routeDirection)
         {
-            object routeValue;
+            var routeValue = values[routeKey];
+            var routeValueString = Convert.ToString(routeValue, CultureInfo.InvariantCulture);
 
-            if (values.TryGetValue(routeKey, out routeValue))
-            {
-                var routeValueString = Convert.ToString(routeValue, CultureInfo.InvariantCulture);
-
-                return new Regex(Pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
-                    .IsMatch(routeValueString);
-            }
-
-            return false;
+            return new Regex(Pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
+                .IsMatch(routeValueString);
         }
     }
 }
