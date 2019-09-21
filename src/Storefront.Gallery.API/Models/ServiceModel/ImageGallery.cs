@@ -66,7 +66,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
         private string ImageName(long tenantId, string galleryName, string imageName, string imageSize)
         {
-            return $"{tenantId}-{galleryName}-{imageName}.{imageSize}.jpeg";
+            return $"{tenantId}-{imageName}.{galleryName}.{imageSize}.jpg";
         }
     }
 }
