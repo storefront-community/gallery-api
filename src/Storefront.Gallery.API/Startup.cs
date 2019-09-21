@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
 using Storefront.Gallery.API.Extensions;
+using Storefront.Gallery.API.Filters;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage.AmazonS3;
 
@@ -23,7 +24,10 @@ namespace Storefront.Gallery.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new RequestValidationFilter());
+            });
 
             services.AddRouting(options =>
             {
