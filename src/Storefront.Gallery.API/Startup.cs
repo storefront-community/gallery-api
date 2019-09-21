@@ -5,10 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
-using Storefront.Gallery.API.Extensions;
 using Storefront.Gallery.API.Filters;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage.AmazonS3;
+using Storefront.Gallery.API.Swagger;
 
 namespace Storefront.Gallery.API
 {

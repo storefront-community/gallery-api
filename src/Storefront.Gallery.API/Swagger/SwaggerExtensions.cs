@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Storefront.Gallery.API.Extensions
+namespace Storefront.Gallery.API.Swagger
 {
     [ExcludeFromCodeCoverage]
     public static class SwaggerExtensions
@@ -36,6 +36,8 @@ namespace Storefront.Gallery.API.Extensions
                 options.IncludeXmlComments(xmlPath);
                 options.DocInclusionPredicate((_, api) => !string.IsNullOrWhiteSpace(api.GroupName));
                 options.TagActionsBy(api => new[] { api.GroupName });
+                options.OperationFilter<SwaggerExcludeFilter>();
+                options.SchemaFilter<SwaggerExcludeFilter>();
             });
         }
 
