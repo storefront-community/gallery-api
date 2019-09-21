@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Storefront.Gallery.API.Swagger;
 
 namespace Storefront.Gallery.API.Models.TransferModel
 {
@@ -16,11 +17,13 @@ namespace Storefront.Gallery.API.Models.TransferModel
         [Required]
         public IFormFile File { get; set; }
 
+        [SwaggerExclude]
         [RegularExpression("^image/(jpeg|png)$", ErrorMessage = "File must be an image in JPEG or PNG format.")]
-        internal string ContentType => File?.ContentType;
+        public string ContentType => File?.ContentType;
 
+        [SwaggerExclude]
         [Range(0, Max5MB, ErrorMessage = "File must be an image with a maximum size of 5MB.")]
-        internal long Size => File?.Length ?? 0;
+        public long Size => File?.Length ?? 0;
 
         public async Task<byte[]> ToByteArray()
         {
