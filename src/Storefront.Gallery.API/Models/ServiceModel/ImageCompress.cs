@@ -29,7 +29,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             var rectangle = new Rectangle(0, 0, calculatedSize.Width, calculatedSize.Height);
             var resizedImage = new Bitmap(calculatedSize.Width, calculatedSize.Height);
 
-            resizedImage.SetResolution(_image.HorizontalResolution, _image.VerticalResolution);
+            resizedImage.SetResolution(xDpi: 72, yDpi: 72);
 
             using (var graphics = Graphics.FromImage(resizedImage))
             {
