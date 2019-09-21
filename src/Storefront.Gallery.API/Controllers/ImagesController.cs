@@ -29,11 +29,11 @@ namespace Storefront.Gallery.API.Controllers
         /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
-        /// Image size: **default** (720x480), **cover** (1920x1280) or **thumbnail** (64x48).
+        /// Image size: **default** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
         /// </param>
         /// <returns>Returns a image.</returns>
         /// <response code="200">Image file.</response>
-        /// <response code="404">Error: PICTURE_NOT_FOUND</response>
+        /// <response code="404">Error: IMAGE_NOT_FOUND</response>
         [HttpGet, Route("{imageSize:regex(^(default|cover|thumbnail)$)}")]
         [Produces("image/jpeg")]
         [ProducesResponseType(statusCode: 200)]
