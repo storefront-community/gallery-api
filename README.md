@@ -2,12 +2,6 @@
 
 Restaurant gallery to present dish pictures.
 
-This is a RESTful API developed with
-[ASP.NET Core MVC](https://github.com/aspnet/AspNetCore) using
-[RabbitMQ](https://www.rabbitmq.com) as the event bus,
-[Amazon S3](https://aws.amazon.com/s3/) as the file storage and
-[Sentry](https://sentry.io) for error tracking.
-
 ## Status
 
 [![CircleCI](https://circleci.com/gh/storefront-community/gallery-api.svg?style=shield)](https://circleci.com/gh/storefront-community/gallery-api)
@@ -15,42 +9,8 @@ This is a RESTful API developed with
 
 ## Documentation
 
-API documentation written with Swagger and available at the root URL (no route prefix).
-
-The API requires the native OS dependency `ligdiplus` to resize the images.
-
-```bash
-sudo apt-get install libgdiplus
-```
-
-## Debug locally
-
-Before you start:
-
-- Install [.NET Core SDK](https://dotnet.microsoft.com/)
-- Install [PostgreSQL](https://www.postgresql.org/) or
-  [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
-- Install [VS Code](https://code.visualstudio.com/) (or your preferred editor)
-
-To create/drop a PotgreSQL database on Linux:
-
-```bash
-# Create database
-bash .sh/db/postgresql/create.sh /path/to/file.conf
-
-# Drop database
-bash .sh/db/postgresql/drop.sh /path/to/file.conf
-```
-
-```bash
-#file.conf
-
-PGHOST=""
-PGPORT=""
-PGUSER=""
-PGPASSWORD=""
-DBNAME=""
-```
+For documentation, including overview, Docker image and debug locally, please refer to the
+[Wiki pages](https://github.com/storefront-community/gallery-api/wiki).
 
 ## Bugs and features
 
