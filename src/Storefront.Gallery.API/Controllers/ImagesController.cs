@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Storefront.Gallery.API.Authorization;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.API.Models.ServiceModel;
 using Storefront.Gallery.API.Models.TransferModel;
@@ -17,10 +18,12 @@ namespace Storefront.Gallery.API.Controllers
     public sealed class ImagesController : Controller
     {
         private readonly IFileStorage _fileStorage;
+        private readonly IEventBus _eventBus;
 
-        public ImagesController(IFileStorage fileStorage)
+        public ImagesController(IFileStorage fileStorage, IEventBus eventBus)
         {
             _fileStorage = fileStorage;
+            _eventBus = eventBus;
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace Storefront.Gallery.API.Controllers
             [FromRoute] string imageName, [FromRoute] string imageSize)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new ImageGallery(_fileStorage);
+            var gallery = new ImageGallery(_fileStorage, _eventBus);
 
             await gallery.Load(tenantId, galleryName, imageName, imageSize);
 
@@ -72,7 +75,7 @@ namespace Storefront.Gallery.API.Controllers
             [FromRoute] string galleryName, [FromRoute] string imageName, [FromRoute] string imageSize)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new ImageGallery(_fileStorage);
+            var gallery = new ImageGallery(_fileStorage, _eventBus);
 
             using (var stream = new MemoryStream())
             {
