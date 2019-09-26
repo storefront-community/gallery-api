@@ -25,9 +25,9 @@ namespace Storefront.Gallery.Tests.Functional
         }
 
         [Theory]
-        [InlineData("item", "default")]
+        [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "default")]
+        [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "cover")]
         public async Task ShouldRespond204(string gallery, string size)
         {
@@ -45,17 +45,17 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item", "image/png")]
         [InlineData("itemgroup", "image/jpeg")]
         [InlineData("itemgroup", "image/png")]
-        public async Task ShouldSaveDefaultSizeAndGenerateThumbnail(string gallery, string contentType)
+        public async Task ShouldSavestandardSizeAndGenerateThumbnail(string gallery, string contentType)
         {
             var filename = ConstantFactory.Id;
-            var path = $"/{gallery}/{filename}/default";
+            var path = $"/{gallery}/{filename}/standard";
             var image = await File.ReadAllBytesAsync($"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg");
             var formData = new ImageFormData().Upload(image, contentType);
             var response = await _client.PutAsync(path, formData);
-            var defaultSize = $"{_token.TenantId}-{filename}.{gallery}.default.jpg";
+            var standardSize = $"{_token.TenantId}-{filename}.{gallery}.standard.jpg";
             var thumbnailSize = $"{_token.TenantId}-{filename}.{gallery}.thumbnail.jpg";
 
-            Assert.Contains(_server.FileStorage.SavedFiles, file => file.Name == defaultSize);
+            Assert.Contains(_server.FileStorage.SavedFiles, file => file.Name == standardSize);
             Assert.Contains(_server.FileStorage.SavedFiles, file => file.Name == thumbnailSize);
         }
 
@@ -91,9 +91,9 @@ namespace Storefront.Gallery.Tests.Functional
         }
 
         [Theory]
-        [InlineData("item", "default")]
+        [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "default")]
+        [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "cover")]
         public async Task ShouldRespond400ForUnacceptableContentType(string gallery, string size)
         {
@@ -109,9 +109,9 @@ namespace Storefront.Gallery.Tests.Functional
         }
 
         [Theory]
-        [InlineData("item", "default")]
+        [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "default")]
+        [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "cover")]
         public async Task ShouldRespond400ForSizeExceeded(string gallery, string size)
         {
@@ -127,7 +127,7 @@ namespace Storefront.Gallery.Tests.Functional
         }
 
         [Theory]
-        [InlineData("nongallery", "default")]
+        [InlineData("nongallery", "standard")]
         [InlineData("nongallery", "cover")]
         public async Task ShouldRespond404ForInvalidGallery(string gallery, string size)
         {

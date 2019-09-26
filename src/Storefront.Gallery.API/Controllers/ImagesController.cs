@@ -32,12 +32,12 @@ namespace Storefront.Gallery.API.Controllers
         /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
-        /// Image size: **default** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
+        /// Image size: **standard** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
         /// </param>
         /// <returns>Returns a image.</returns>
         /// <response code="200">Image file.</response>
         /// <response code="404">Error: IMAGE_NOT_FOUND</response>
-        [HttpGet, Route("{imageSize:regex(^(default|cover|thumbnail)$)}")]
+        [HttpGet, Route("{imageSize:regex(^(standard|cover|thumbnail)$)}")]
         [Produces("image/jpeg")]
         [ProducesResponseType(statusCode: 200)]
         [ProducesResponseType(statusCode: 404, type: typeof(ImageNotFoundError))]
@@ -64,11 +64,11 @@ namespace Storefront.Gallery.API.Controllers
         /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
-        /// Image size: **default** (720x480) or **cover** (1920x1280). The image will be converted to JPEG and resized.
+        /// Image size: **standard** (720x480) or **cover** (1920x1280). The image will be converted to JPEG and resized.
         /// </param>
         /// <returns>No content.</returns>
         /// <response code="204">Image has been added or updated.</response>
-        [HttpPut, Route("{imageSize:regex(^(default|cover)$)}")]
+        [HttpPut, Route("{imageSize:regex(^(standard|cover)$)}")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(statusCode: 204)]
         public async Task<IActionResult> Save([FromForm] ImageFormData formData,

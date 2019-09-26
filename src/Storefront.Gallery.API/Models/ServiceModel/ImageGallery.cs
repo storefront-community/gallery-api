@@ -9,7 +9,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 {
     public sealed class ImageGallery
     {
-        public const string Default = "default";
+        public const string Standard = "standard";
         public const string Thumbnail = "thumbnail";
         public const string Cover = "cover";
 
@@ -38,7 +38,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         {
             switch (imageSize)
             {
-                case Default:
+                case Standard:
                 {
                     await SaveDefault(tenantId, galleryName, imageName, stream);
                     await SaveThumbnail(tenantId, galleryName, imageName, stream);
@@ -56,7 +56,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         {
             var storedFile = new StoredFile
             {
-                Name = ImageName(tenantId, galleryName, imageName, Default),
+                Name = ImageName(tenantId, galleryName, imageName, Standard),
                 ContentType = MediaTypeNames.Image.Jpeg,
                 Stream = new ImageCompress(stream).Optimize(width: 720, height: 480, quality: 90)
             };
