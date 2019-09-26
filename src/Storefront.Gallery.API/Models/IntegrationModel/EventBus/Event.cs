@@ -2,7 +2,7 @@ using System;
 
 namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus
 {
-    public class Event<TPayload>
+    public class Event<TPayload> : IEvent
     {
         public Event()
         {
@@ -14,5 +14,6 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus
         public DateTime CreatedAt { get; set; }
         public string Name { get; set; }
         public TPayload Payload { get; set; }
+        object IEvent.Payload => Payload;
     }
 }

@@ -31,9 +31,9 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
             _handlers = new Dictionary<string, Type>();
         }
 
-        public string Binding { get; set; }
+        public string RoutingKey { get; set; }
 
-        public void Publish<TPayload>(Event<TPayload> @event)
+        public void Publish(IEvent @event)
         {
             using (var channel = _connection.CreateModel())
             {
@@ -49,9 +49,9 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
             }
         }
 
-        public void Subscribe<TEventHandler>(string binding) where TEventHandler : EventHandler
+        public void Subscribe<TEventHandler>(string name) where TEventHandler : IEventHandler
         {
-            _handlers.Add(binding, typeof(TEventHandler));
+            _handlers.Add(name, typeof(TEventHandler));
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -80,7 +80,7 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
                 autoDelete: false,
                 arguments: null);
 
-            _channel.QueueBind(_options.Queue, _options.Exchange, Binding, arguments: null);
+            _channel.QueueBind(_options.Queue, _options.Exchange, RoutingKey, arguments: null);
 
             var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.Received += HandleMessage;
@@ -104,11 +104,19 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var handlerType = _handlers[args.RoutingKey];
-                    var handler = ((EventHandler)scope.ServiceProvider.GetRequiredService(handlerType));
-                    var message = Encoding.UTF8.GetString(args.Body);
+                    var handlerType = default(Type);
 
-                    await handler.Handle(message);
+                    if (_handlers.TryGetValue(args.RoutingKey, out handlerType))
+                    {
+                        var handler = ((IEventHandler)scope.ServiceProvider.GetRequiredService(handlerType));
+                        var message = Encoding.UTF8.GetString(args.Body);
+
+                        await handler.Handle(message);
+                    }
+                    else
+                    {
+                        SentrySdk.CaptureMessage($"RabbitMQ: No subscribers to event '{args.RoutingKey}'.");
+                    }
                 }
             }
             catch (Exception ex)

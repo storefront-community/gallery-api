@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 
 namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus
 {
-    public abstract class EventHandler
+    public interface IEventHandler
     {
-        public abstract Task Handle(string message);
+        Task Handle(string message);
     }
 }
