@@ -32,7 +32,7 @@ namespace Storefront.Gallery.Tests
             });
 
             services.AddDefaultCorsPolicy();
-            services.AddJwtAuthentication(_configuration.GetSection("Auth"));
+            services.AddJwtAuthentication(_configuration.GetSection("JWT"));
 
             services.AddSingleton<IFileStorage, FakeFileStorage>();
         }

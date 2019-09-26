@@ -41,7 +41,7 @@ namespace Storefront.Gallery.API
             });
 
             services.AddDefaultCorsPolicy();
-            services.AddJwtAuthentication(_configuration.GetSection("Auth"));
+            services.AddJwtAuthentication(_configuration.GetSection("JWT"));
             services.AddSwaggerDocumentation();
 
             services.AddScoped<IFileStorage, AmazonS3Bucket>();
