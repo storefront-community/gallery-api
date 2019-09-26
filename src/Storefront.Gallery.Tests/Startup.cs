@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
 using Storefront.Gallery.API.Filters;
+using Storefront.Gallery.API.Models.EventModel.Subscribed.Menu;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.Tests.Fakes;
 
@@ -35,6 +37,20 @@ namespace Storefront.Gallery.Tests
             services.AddJwtAuthentication(_configuration.GetSection("JWT"));
 
             services.AddSingleton<IFileStorage, FakeFileStorage>();
+
+            services.AddScoped<ItemDeletedEvent>();
+            services.AddScoped<ItemGroupDeletedEvent>();
+
+            services.AddSingleton<IEventBus, FakeEventBroker>(serviceProvider =>
+            {
+                var broker = new FakeEventBroker(serviceProvider);
+
+                broker.RoutingKey = "menu.*.deleted";
+                broker.Subscribe<ItemDeletedEvent>("menu.item.deleted");
+                broker.Subscribe<ItemGroupDeletedEvent>("menu.item-group.deleted");
+
+                return broker;
+            });
         }
 
         public void Configure(IApplicationBuilder app)
