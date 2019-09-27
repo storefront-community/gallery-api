@@ -92,8 +92,8 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _channel.Close();
-            _connection.Close();
+            _channel?.Close();
+            _connection?.Close();
 
             return Task.CompletedTask;
         }
