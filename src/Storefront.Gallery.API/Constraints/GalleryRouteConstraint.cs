@@ -10,7 +10,7 @@ namespace Storefront.Gallery.API.Constraints
     {
         public const string ConstraintName = "gallery";
 
-        private const string Pattern = "^(item|itemgroup)$";
+        private const string Pattern = "^(item|item-group)$";
 
         public bool Match(HttpContext httpContext, IRouter route, string routeKey,
             RouteValueDictionary values, RouteDirection routeDirection)

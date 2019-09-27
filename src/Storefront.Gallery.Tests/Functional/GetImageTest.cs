@@ -26,9 +26,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item", "standard")]
         [InlineData("item", "thumbnail")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "thumbnail")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "thumbnail")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldRespond200(string gallery, string display)
         {
             var path = $"/{gallery}/{Filename}/{display}";
@@ -41,9 +41,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item", "standard")]
         [InlineData("item", "thumbnail")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "thumbnail")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "thumbnail")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldAlwaysRespondInJpegFormat(string gallery, string display)
         {
             var path = $"/{gallery}/{Filename}/{display}";
@@ -56,9 +56,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item", "cover", "395d65a0f0aaf65f38cb1e4ce41ee3bc")]
         [InlineData("item", "standard", "86bed7f3716235f67dd33455470ce28c")]
         [InlineData("item", "thumbnail", "53841c18e965b9c2986b6533028fb616")]
-        [InlineData("itemgroup", "cover", "ca135b7b8032a7ab8e3576affe2388dd")]
-        [InlineData("itemgroup", "standard", "56b80871c2b8d2aa27e756af43732094")]
-        [InlineData("itemgroup", "thumbnail", "e0b92beb7c005e1fce6bebcf9bf15957")]
+        [InlineData("item-group", "cover", "ca135b7b8032a7ab8e3576affe2388dd")]
+        [InlineData("item-group", "standard", "56b80871c2b8d2aa27e756af43732094")]
+        [InlineData("item-group", "thumbnail", "e0b92beb7c005e1fce6bebcf9bf15957")]
         public async Task ShouldGetRequestedSize(string gallery, string display, string checksum)
         {
             var path = $"/{gallery}/{Filename}/{display}";
@@ -72,9 +72,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item", "standard")]
         [InlineData("item", "thumbnail")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "thumbnail")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "thumbnail")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldRespond404IfImageDoesNotExist(string gallery, string display)
         {
             var path = $"/{gallery}/909/{display}";
@@ -87,7 +87,7 @@ namespace Storefront.Gallery.Tests.Functional
 
         [Theory]
         [InlineData("item")]
-        [InlineData("itemgroup")]
+        [InlineData("item-group")]
         public async Task ShouldRespond404ForInvalidSizeName(string gallery)
         {
             var path = $"/{gallery}/{Filename}/nondisplay";

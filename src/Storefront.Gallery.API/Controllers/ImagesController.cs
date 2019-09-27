@@ -29,7 +29,7 @@ namespace Storefront.Gallery.API.Controllers
         /// <summary>
         /// Get image in JPEG format.
         /// </summary>
-        /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
+        /// <param name="galleryName">Gallery name: **item** or **item-group**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
         /// Image size: **standard** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
@@ -61,7 +61,7 @@ namespace Storefront.Gallery.API.Controllers
         /// Add or update image. Supports JPEG and PNG only.
         /// </summary>
         /// <param name="formData">Uploaded image using FormData.</param>
-        /// <param name="galleryName">Gallery name: **item** or **itemgroup**.</param>
+        /// <param name="galleryName">Gallery name: **item** or **item-group**.</param>
         /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
         /// <param name="imageSize">
         /// Image size: **standard** (720x480) or **cover** (1920x1280). The image will be converted to JPEG and resized.

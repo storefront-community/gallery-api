@@ -28,8 +28,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldRespond204AfterSaveSuccessfully(string gallery, string display)
         {
             var filename = ConstantFactory.Id;
@@ -44,8 +44,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "image/jpeg")]
         [InlineData("item", "image/png")]
-        [InlineData("itemgroup", "image/jpeg")]
-        [InlineData("itemgroup", "image/png")]
+        [InlineData("item-group", "image/jpeg")]
+        [InlineData("item-group", "image/png")]
         public async Task ShouldSaveStandardAndGenerateThumbnail(string gallery, string contentType)
         {
             var filename = ConstantFactory.Id;
@@ -63,8 +63,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "image/jpeg")]
         [InlineData("item", "image/png")]
-        [InlineData("itemgroup", "image/jpeg")]
-        [InlineData("itemgroup", "image/png")]
+        [InlineData("item-group", "image/jpeg")]
+        [InlineData("item-group", "image/png")]
         public async Task ShouldSaveCover(string gallery, string contentType)
         {
             var filename = ConstantFactory.Id;
@@ -80,8 +80,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldAlwaysSaveJpeg(string gallery, string display)
         {
             var filename = ConstantFactory.Id;
@@ -97,7 +97,7 @@ namespace Storefront.Gallery.Tests.Functional
 
         [Theory]
         [InlineData("item")]
-        [InlineData("itemgroup")]
+        [InlineData("item-group")]
         public async Task ShouldPublishEventAfterSavingCover(string gallery)
         {
             var filename = ConstantFactory.Id;
@@ -116,7 +116,7 @@ namespace Storefront.Gallery.Tests.Functional
 
         [Theory]
         [InlineData("item")]
-        [InlineData("itemgroup")]
+        [InlineData("item-group")]
         public async Task ShouldPublishEventAfterSavingStandardAndThumbnail(string gallery)
         {
             var filename = ConstantFactory.Id;
@@ -141,7 +141,7 @@ namespace Storefront.Gallery.Tests.Functional
 
         [Theory]
         [InlineData("item")]
-        [InlineData("itemgroup")]
+        [InlineData("item-group")]
         public async Task ShouldRespond404WhenTrySaveThumbnailDirectly(string gallery)
         {
             var filename = ConstantFactory.Id;
@@ -156,8 +156,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldRespond400ForUnacceptableContentType(string gallery, string display)
         {
             var filename = ConstantFactory.Id;
@@ -174,8 +174,8 @@ namespace Storefront.Gallery.Tests.Functional
         [Theory]
         [InlineData("item", "standard")]
         [InlineData("item", "cover")]
-        [InlineData("itemgroup", "standard")]
-        [InlineData("itemgroup", "cover")]
+        [InlineData("item-group", "standard")]
+        [InlineData("item-group", "cover")]
         public async Task ShouldRespond400ForSizeExceeded(string gallery, string display)
         {
             var filename = ConstantFactory.Id;
