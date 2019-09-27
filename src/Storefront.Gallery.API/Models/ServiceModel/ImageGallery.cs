@@ -25,7 +25,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         public StoredFile Image { get; private set; }
         public bool ImageNotExists { get; private set; }
 
-        public async Task Load(long tenantId,  string imageId, string gallery,string display)
+        public async Task Load(long tenantId, string imageId, string gallery,string display)
         {
             Image = await _fileStorage.Read(Filename(tenantId, imageId, gallery, display));
 
@@ -54,18 +54,18 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
         public async Task Delete(long tenantId, string imageId, string gallery)
         {
-            var filenameCover = Filename(tenantId, imageId, gallery, CoverDisplay);
-            var filenameStandard = Filename(tenantId, imageId, gallery, StandardDisplay);
-            var filenameThumbnail = Filename(tenantId, imageId, gallery, ThumbnailDisplay);
+            var filenames = new[]
+            {
+                Filename(tenantId, imageId, gallery, CoverDisplay),
+                Filename(tenantId, imageId, gallery, StandardDisplay),
+                Filename(tenantId, imageId, gallery, ThumbnailDisplay)
+            };
 
-            await _fileStorage.Delete(filenameCover);
-            _eventBus.Publish(new ImageDeletedEvent(filenameCover));
-
-            await _fileStorage.Delete(filenameStandard);
-            _eventBus.Publish(new ImageDeletedEvent(filenameStandard));
-
-            await _fileStorage.Delete(filenameThumbnail);
-            _eventBus.Publish(new ImageDeletedEvent(filenameThumbnail));
+            foreach (var filename in filenames)
+            {
+                await _fileStorage.Delete(filename);
+                _eventBus.Publish(new ImageDeletedEvent(filename));
+            }
         }
 
         private async Task SaveStandard(long tenantId, string imageId, string gallery, Stream image)
