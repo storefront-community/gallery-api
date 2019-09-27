@@ -1,14 +1,13 @@
 using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
-using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 
 namespace Storefront.Gallery.API.Models.EventModel.Published
 {
-    public class ImageDeletedEvent : Event<ImagePayload>
+    public class ImageDeletedEvent : Event<ImageDeletedPayload>
     {
-        public ImageDeletedEvent(StoredFile storedFile)
+        public ImageDeletedEvent(string filename)
         {
             Name = "gallery.image.deleted";
-            Payload = new ImagePayload(storedFile);
+            Payload = new ImageDeletedPayload(filename);
         }
     }
 }
