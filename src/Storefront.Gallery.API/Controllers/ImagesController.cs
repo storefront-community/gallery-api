@@ -13,7 +13,7 @@ namespace Storefront.Gallery.API.Controllers
     /// <summary>
     /// Collection of images.
     /// </summary>
-    [Route("{galleryName:gallery}/{imageName}"), Authorize]
+    [Route("{gallery:gallery}/{image}"), Authorize]
     [ApiExplorerSettings(GroupName = "Images")]
     public sealed class ImagesController : Controller
     {
@@ -29,58 +29,59 @@ namespace Storefront.Gallery.API.Controllers
         /// <summary>
         /// Get image in JPEG format.
         /// </summary>
-        /// <param name="galleryName">Gallery name: **item** or **item-group**.</param>
-        /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
-        /// <param name="imageSize">
-        /// Image size: **standard** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
+        /// <param name="gallery">Gallery name: **item** or **item-group**.</param>
+        /// <param name="image">Image ID (or name). Represented by the item ID or group item ID.</param>
+        /// <param name="display">
+        /// Image display size: **standard** (720x480), **cover** (1920x1280) or **thumbnail** (72x48).
         /// </param>
         /// <returns>Returns a image.</returns>
         /// <response code="200">Image file.</response>
         /// <response code="404">Error: IMAGE_NOT_FOUND</response>
-        [HttpGet, Route("{imageSize:regex(^(standard|cover|thumbnail)$)}")]
+        [HttpGet, Route("{display:regex(^(standard|cover|thumbnail)$)}")]
         [Produces("image/jpeg")]
         [ProducesResponseType(statusCode: 200)]
         [ProducesResponseType(statusCode: 404, type: typeof(ImageNotFoundError))]
-        public async Task<IActionResult> Get([FromRoute] string galleryName,
-            [FromRoute] string imageName, [FromRoute] string imageSize)
+        public async Task<IActionResult> Get([FromRoute] string gallery,
+            [FromRoute] string image, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new ImageGallery(_fileStorage, _eventBus);
+            var imageGallery = new ImageGallery(_fileStorage, _eventBus);
 
-            await gallery.Load(tenantId, galleryName, imageName, imageSize);
+            await imageGallery.Load(tenantId, image, gallery, display);
 
-            if (gallery.ImageNotExists)
+            if (imageGallery.ImageNotExists)
             {
                 return new ImageNotFoundError();
             }
 
-            return File(gallery.Image.Stream, gallery.Image.ContentType);
+            return File(imageGallery.Image.Stream, imageGallery.Image.ContentType);
         }
 
         /// <summary>
         /// Add or update image. Supports JPEG and PNG only.
         /// </summary>
         /// <param name="formData">Uploaded image using FormData.</param>
-        /// <param name="galleryName">Gallery name: **item** or **item-group**.</param>
-        /// <param name="imageName">Image name. Represented by the item ID or group item ID.</param>
-        /// <param name="imageSize">
-        /// Image size: **standard** (720x480) or **cover** (1920x1280). The image will be converted to JPEG and resized.
+        /// <param name="gallery">Gallery name: **item** or **item-group**.</param>
+        /// <param name="image">Image ID (or name). Represented by the item ID or group item ID.</param>
+        /// <param name="display">
+        /// Image display size: **standard** (720x480) or **cover** (1920x1280).
+        /// The image will be resized and converted to JPEG at 72 DPI.
         /// </param>
         /// <returns>No content.</returns>
         /// <response code="204">Image has been added or updated.</response>
-        [HttpPut, Route("{imageSize:regex(^(standard|cover)$)}")]
+        [HttpPut, Route("{display:regex(^(standard|cover)$)}")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(statusCode: 204)]
         public async Task<IActionResult> Save([FromForm] ImageFormData formData,
-            [FromRoute] string galleryName, [FromRoute] string imageName, [FromRoute] string imageSize)
+            [FromRoute] string gallery, [FromRoute] string image, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
-            var gallery = new ImageGallery(_fileStorage, _eventBus);
+            var imageGallery = new ImageGallery(_fileStorage, _eventBus);
 
             using (var stream = new MemoryStream())
             {
                 await formData.File.CopyToAsync(stream);
-                await gallery.Save(tenantId, galleryName, imageName, imageSize, stream);
+                await imageGallery.Save(tenantId, image, gallery, display, stream);
             }
 
             return NoContent();

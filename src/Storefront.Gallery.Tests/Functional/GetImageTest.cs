@@ -9,7 +9,7 @@ namespace Storefront.Gallery.Tests.Functional
 {
     public sealed class GetImageTest
     {
-        private const string Filename = "1406";
+        private const string ImageId = "1406";
 
         private readonly FakeApiServer _server;
         private readonly FakeApiToken _token;
@@ -31,7 +31,7 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item-group", "cover")]
         public async Task ShouldRespond200(string gallery, string display)
         {
-            var path = $"/{gallery}/{Filename}/{display}";
+            var path = $"/{gallery}/{ImageId}/{display}";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -46,7 +46,7 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item-group", "cover")]
         public async Task ShouldAlwaysRespondInJpegFormat(string gallery, string display)
         {
-            var path = $"/{gallery}/{Filename}/{display}";
+            var path = $"/{gallery}/{ImageId}/{display}";
             var response = await _client.GetAsync(path);
 
             Assert.Equal("image/jpeg", response.Content.Headers.ContentType.MediaType);
@@ -61,7 +61,7 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item-group", "thumbnail", "e0b92beb7c005e1fce6bebcf9bf15957")]
         public async Task ShouldGetRequestedSize(string gallery, string display, string checksum)
         {
-            var path = $"/{gallery}/{Filename}/{display}";
+            var path = $"/{gallery}/{ImageId}/{display}";
             var response = await _client.GetAsync(path);
             var image = await response.Content.ReadAsStreamAsync();
 
@@ -90,7 +90,7 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("item-group")]
         public async Task ShouldRespond404ForInvalidSizeName(string gallery)
         {
-            var path = $"/{gallery}/{Filename}/nondisplay";
+            var path = $"/{gallery}/{ImageId}/nondisplay";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

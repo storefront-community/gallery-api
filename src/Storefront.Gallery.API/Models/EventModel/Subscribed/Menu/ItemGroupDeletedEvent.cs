@@ -24,7 +24,7 @@ namespace Storefront.Gallery.API.Models.EventModel.Subscribed.Menu
 
             await imageGallery.Delete(
                 tenantId: json.Payload.TenantId,
-                filename: json.Payload.Id.ToString(),
+                imageId: json.Payload.Id.ToString(),
                 gallery: "item-group");
         }
     }

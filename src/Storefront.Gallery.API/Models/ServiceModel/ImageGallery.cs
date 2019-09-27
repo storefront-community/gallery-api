@@ -25,38 +25,38 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         public StoredFile Image { get; private set; }
         public bool ImageNotExists { get; private set; }
 
-        public async Task Load(long tenantId, string gallery, string filename, string display)
+        public async Task Load(long tenantId,  string imageId, string gallery,string display)
         {
-            Image = await _fileStorage.Read(FullQualifiedFilename(tenantId, gallery, filename, display));
+            Image = await _fileStorage.Read(Filename(tenantId, imageId, gallery, display));
 
             ImageNotExists = Image == null;
         }
 
-        public async Task Save(long tenantId, string gallery, string filename, string display, Stream image)
+        public async Task Save(long tenantId, string imageId, string gallery, string display, Stream image)
         {
             switch (display)
             {
                 case StandardDisplay:
                 {
                     await Task.WhenAll(
-                        SaveStandard(tenantId, gallery, filename, image),
-                        SaveThumbnail(tenantId, gallery, filename, image)
+                        SaveStandard(tenantId, imageId, gallery, image),
+                        SaveThumbnail(tenantId, imageId, gallery, image)
                     );
                     break;
                 }
                 case CoverDisplay:
                 {
-                    await SaveCover(tenantId, gallery, filename, image);
+                    await SaveCover(tenantId, imageId, gallery, image);
                     break;
                 }
             }
         }
 
-        public async Task Delete(long tenantId, string gallery, string filename)
+        public async Task Delete(long tenantId, string imageId, string gallery)
         {
-            var filenameCover = FullQualifiedFilename(tenantId, gallery, filename, CoverDisplay);
-            var filenameStandard = FullQualifiedFilename(tenantId, gallery, filename, StandardDisplay);
-            var filenameThumbnail = FullQualifiedFilename(tenantId, gallery, filename, ThumbnailDisplay);
+            var filenameCover = Filename(tenantId, imageId, gallery, CoverDisplay);
+            var filenameStandard = Filename(tenantId, imageId, gallery, StandardDisplay);
+            var filenameThumbnail = Filename(tenantId, imageId, gallery, ThumbnailDisplay);
 
             await _fileStorage.Delete(filenameCover);
             _eventBus.Publish(new ImageDeletedEvent(filenameCover));
@@ -68,12 +68,12 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             _eventBus.Publish(new ImageDeletedEvent(filenameThumbnail));
         }
 
-        private async Task SaveStandard(long tenantId, string gallery, string filename, Stream image)
+        private async Task SaveStandard(long tenantId, string imageId, string gallery, Stream image)
         {
             var storedFile = new StoredFile
             {
                 ContentType = MediaTypeNames.Image.Jpeg,
-                Name = FullQualifiedFilename(tenantId, gallery, filename, StandardDisplay),
+                Name = Filename(tenantId, imageId, gallery, StandardDisplay),
                 Stream = new ImageCompress(image).Optimize(width: 720, height: 480, quality: 90)
             };
 
@@ -82,12 +82,12 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             _eventBus.Publish(new ImageCreatedEvent(storedFile));
         }
 
-        private async Task SaveThumbnail(long tenantId, string gallery, string filename, Stream image)
+        private async Task SaveThumbnail(long tenantId, string imageId, string gallery, Stream image)
         {
             var storedFile = new StoredFile
             {
                 ContentType = MediaTypeNames.Image.Jpeg,
-                Name = FullQualifiedFilename(tenantId, gallery, filename, ThumbnailDisplay),
+                Name = Filename(tenantId, imageId, gallery, ThumbnailDisplay),
                 Stream = new ImageCompress(image).Optimize(width: 72, height: 48, quality: 20)
             };
 
@@ -96,12 +96,12 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             _eventBus.Publish(new ImageCreatedEvent(storedFile));
         }
 
-        private async Task SaveCover(long tenantId, string gallery, string filename, Stream image)
+        private async Task SaveCover(long tenantId, string imageId, string gallery, Stream image)
         {
             var storedFile = new StoredFile
             {
                 ContentType = MediaTypeNames.Image.Jpeg,
-                Name = FullQualifiedFilename(tenantId, gallery, filename, CoverDisplay),
+                Name = Filename(tenantId, imageId, gallery, CoverDisplay),
                 Stream = new ImageCompress(image).Optimize(width: 1920, height: 1280, quality: 90)
             };
 
@@ -110,9 +110,9 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             _eventBus.Publish(new ImageCreatedEvent(storedFile));
         }
 
-        private string FullQualifiedFilename(long tenantId, string gallery, string filename, string display)
+        private string Filename(long tenantId, string imageId, string gallery, string display)
         {
-            return $"{tenantId}-{filename}.{gallery}.{display}.jpg";
+            return $"{tenantId}-{imageId}.{gallery}.{display}.jpg";
         }
     }
 }
