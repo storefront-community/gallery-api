@@ -113,10 +113,6 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
 
                         await handler.Handle(message);
                     }
-                    else
-                    {
-                        SentrySdk.CaptureMessage($"RabbitMQ: No subscribers to event '{args.RoutingKey}'.");
-                    }
                 }
             }
             catch (Exception ex)
