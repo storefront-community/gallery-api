@@ -9,7 +9,7 @@ namespace Storefront.Gallery.Tests.Functional
 {
     public sealed class GetImageTest
     {
-        private const string ImageName = "1406";
+        private const string Filename = "1406";
 
         private readonly FakeApiServer _server;
         private readonly FakeApiToken _token;
@@ -29,9 +29,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "thumbnail")]
         [InlineData("itemgroup", "cover")]
-        public async Task ShouldRespond200(string gallery, string size)
+        public async Task ShouldRespond200(string gallery, string display)
         {
-            var path = $"/{gallery}/{ImageName}/{size}";
+            var path = $"/{gallery}/{Filename}/{display}";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -44,9 +44,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "thumbnail")]
         [InlineData("itemgroup", "cover")]
-        public async Task ShouldAlwaysRespondInJpegFormat(string gallery, string size)
+        public async Task ShouldAlwaysRespondInJpegFormat(string gallery, string display)
         {
-            var path = $"/{gallery}/{ImageName}/{size}";
+            var path = $"/{gallery}/{Filename}/{display}";
             var response = await _client.GetAsync(path);
 
             Assert.Equal("image/jpeg", response.Content.Headers.ContentType.MediaType);
@@ -59,9 +59,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("itemgroup", "cover", "ca135b7b8032a7ab8e3576affe2388dd")]
         [InlineData("itemgroup", "standard", "56b80871c2b8d2aa27e756af43732094")]
         [InlineData("itemgroup", "thumbnail", "e0b92beb7c005e1fce6bebcf9bf15957")]
-        public async Task ShouldGetRequestedSize(string gallery, string size, string checksum)
+        public async Task ShouldGetRequestedSize(string gallery, string display, string checksum)
         {
-            var path = $"/{gallery}/{ImageName}/{size}";
+            var path = $"/{gallery}/{Filename}/{display}";
             var response = await _client.GetAsync(path);
             var image = await response.Content.ReadAsStreamAsync();
 
@@ -75,9 +75,9 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("itemgroup", "standard")]
         [InlineData("itemgroup", "thumbnail")]
         [InlineData("itemgroup", "cover")]
-        public async Task ShouldRespond404IfImageDoesNotExist(string gallery, string size)
+        public async Task ShouldRespond404IfImageDoesNotExist(string gallery, string display)
         {
-            var path = $"/{gallery}/909/{size}";
+            var path = $"/{gallery}/909/{display}";
             var response = await _client.GetAsync(path);
             var jsonResponse = await _client.ReadAsJsonAsync<ImageNotFoundError>(response);
 
@@ -90,7 +90,7 @@ namespace Storefront.Gallery.Tests.Functional
         [InlineData("itemgroup")]
         public async Task ShouldRespond404ForInvalidSizeName(string gallery)
         {
-            var path = $"/{gallery}/{ImageName}/nonsize";
+            var path = $"/{gallery}/{Filename}/nondisplay";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
