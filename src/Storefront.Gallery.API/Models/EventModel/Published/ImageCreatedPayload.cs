@@ -2,9 +2,9 @@ using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 
 namespace Storefront.Gallery.API.Models.EventModel.Published
 {
-    public sealed class ImageUploadedPayload
+    public sealed class ImageCreatedPayload
     {
-        public ImageUploadedPayload(StoredFile storedFile)
+        public ImageCreatedPayload(StoredFile storedFile)
         {
             Filename = storedFile.Name;
             ContentType = storedFile.ContentType;
