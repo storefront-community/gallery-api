@@ -110,8 +110,7 @@ namespace Storefront.Gallery.Tests.Functional
 
             Assert.Contains(_server.EventBus.PublishedEvents, @event =>
                 @event.Name == "gallery.image.created" &&
-                (@event.Payload as ImageCreatedPayload).Filename == filenameCover &&
-                (@event.Payload as ImageCreatedPayload).Size == 408688);
+                (@event.Payload as ImageCreatedPayload).Filename == filenameCover);
         }
 
         [Theory]
@@ -130,13 +129,11 @@ namespace Storefront.Gallery.Tests.Functional
 
             Assert.Contains(_server.EventBus.PublishedEvents, @event =>
                 @event.Name == "gallery.image.created" &&
-                (@event.Payload as ImageCreatedPayload).Filename == filenameStandard &&
-                (@event.Payload as ImageCreatedPayload).Size == 87714);
+                (@event.Payload as ImageCreatedPayload).Filename == filenameStandard);
 
             Assert.Contains(_server.EventBus.PublishedEvents, @event =>
                 @event.Name == "gallery.image.created" &&
-                (@event.Payload as ImageCreatedPayload).Filename == fileNameThumbnail &&
-                (@event.Payload as ImageCreatedPayload).Size == 1222);
+                (@event.Payload as ImageCreatedPayload).Filename == fileNameThumbnail);
         }
 
         [Theory]
