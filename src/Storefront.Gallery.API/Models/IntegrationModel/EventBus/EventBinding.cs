@@ -7,6 +7,7 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus
     {
         public EventBinding()
         {
+            RoutingKey = string.Empty;
             Subscribers = new Dictionary<string, Type>();
         }
 
