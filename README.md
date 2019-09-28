@@ -1,6 +1,6 @@
 # Gallery API
 
-Restaurant gallery to present dish pictures.
+Store and serve compressed images automatically without losing quality.
 
 ## Status
 
