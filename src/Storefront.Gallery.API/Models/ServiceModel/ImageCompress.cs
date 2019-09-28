@@ -18,9 +18,9 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
         public ImageCompress(Stream stream) : this(Image.FromStream(stream)) { }
 
-        public Stream Optimize(int maxWidth, int maxHeight, long quality = 90)
+        public Stream Optimize(int width, int height, long quality = 90)
         {
-            return ResizeKeepingAspectRatio(maxWidth, maxHeight).ToJpegStream(quality);
+            return ResizeKeepingAspectRatio(width, height).ToJpegStream(quality);
         }
 
         private ImageCompress ResizeKeepingAspectRatio(int maxWidth, int maxHeight)

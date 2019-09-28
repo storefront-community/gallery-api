@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Storefront.Gallery.API
 {
@@ -14,6 +15,10 @@ namespace Storefront.Gallery.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingConext, config) =>
+                {
+                    config.AddEnvironmentVariables(prefix: "StorefrontCommunity_Gallery_");
+                })
                 .UseStartup<Startup>()
                 .UseSentry();
     }

@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
 using Storefront.Gallery.API.Filters;
+using Storefront.Gallery.API.Models.EventModel.Subscribed.Menu;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage.AmazonS3;
 using Storefront.Gallery.API.Swagger;
@@ -24,6 +27,8 @@ namespace Storefront.Gallery.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RabbitMQOptions>(_configuration.GetSection("RabbitMQ"));
+
             services.AddMvc(options =>
             {
                 options.Filters.Add(new RequestValidationFilter());
@@ -35,10 +40,27 @@ namespace Storefront.Gallery.API
             });
 
             services.AddDefaultCorsPolicy();
-            services.AddJwtAuthentication(_configuration.GetSection("Auth"));
+            services.AddJwtAuthentication(_configuration.GetSection("JWT"));
             services.AddSwaggerDocumentation();
 
             services.AddScoped<IFileStorage, AmazonS3Bucket>();
+            services.AddScoped<IMessageBroker, RabbitMQBroker>();
+
+            services.AddScoped<ItemDeletedEvent>();
+            services.AddScoped<ItemGroupDeletedEvent>();
+
+            services.AddSingleton<EventBinding>(serviceProvider =>
+            {
+                var binding = new EventBinding();
+
+                binding.RoutingKey = "menu.*.deleted";
+                binding.Route<ItemDeletedEvent>("menu.item.deleted");
+                binding.Route<ItemGroupDeletedEvent>("menu.item-group.deleted");
+
+                return binding;
+            });
+
+            services.AddHostedService<RabbitMQBroker>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

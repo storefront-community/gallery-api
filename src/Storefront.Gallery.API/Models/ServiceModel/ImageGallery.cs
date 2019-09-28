@@ -1,72 +1,118 @@
 using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Storefront.Gallery.API.Models.EventModel.Published;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 
 namespace Storefront.Gallery.API.Models.ServiceModel
 {
     public sealed class ImageGallery
     {
-        private readonly IFileStorage _fileStorage;
+        public const string StandardDisplay = "standard";
+        public const string ThumbnailDisplay = "thumbnail";
+        public const string CoverDisplay = "cover";
 
-        public ImageGallery(IFileStorage fileStorage)
+        private readonly IFileStorage _fileStorage;
+        private readonly IMessageBroker _messageBroker;
+
+        public ImageGallery(IFileStorage fileStorage, IMessageBroker messageBroker)
         {
             _fileStorage = fileStorage;
+            _messageBroker = messageBroker;
         }
 
         public StoredFile Image { get; private set; }
         public bool ImageNotExists { get; private set; }
 
-        public async Task Load(long tenantId, string galleryName, string imageName, string imageSize)
+        public async Task Load(long tenantId, string imageId, string gallery,string display)
         {
-            var imageFullQualifiedName = ImageName(tenantId, galleryName, imageName, imageSize);
-
-            Image = await _fileStorage.Read(imageFullQualifiedName);
+            Image = await _fileStorage.Read(Filename(tenantId, imageId, gallery, display));
 
             ImageNotExists = Image == null;
         }
 
-        public async Task Save(long tenantId, string galleryName, string imageName, string imageSize, Stream stream)
+        public async Task Save(long tenantId, string imageId, string gallery, string display, Stream image)
         {
-            switch (imageSize)
+            switch (display)
             {
-                case "default": await SaveDefaultSize(tenantId, galleryName, imageName, stream); break;
-                case "cover": await SaveCoverSize(tenantId, galleryName, imageName, stream); break;
+                case StandardDisplay:
+                {
+                    await Task.WhenAll(
+                        SaveStandard(tenantId, imageId, gallery, image),
+                        SaveThumbnail(tenantId, imageId, gallery, image)
+                    );
+                    break;
+                }
+                case CoverDisplay:
+                {
+                    await SaveCover(tenantId, imageId, gallery, image);
+                    break;
+                }
             }
         }
 
-        private async Task SaveDefaultSize(long tenantId, string galleryName, string imageName, Stream stream)
+        public async Task Delete(long tenantId, string imageId, string gallery)
         {
-            var saveDefault = _fileStorage.Save(new StoredFile
+            var filenames = new[]
             {
-                Name = ImageName(tenantId, galleryName, imageName, "default"),
-                ContentType = MediaTypeNames.Image.Jpeg,
-                Stream = new ImageCompress(stream).Optimize(720, 480, quality: 90)
-            });
+                Filename(tenantId, imageId, gallery, CoverDisplay),
+                Filename(tenantId, imageId, gallery, StandardDisplay),
+                Filename(tenantId, imageId, gallery, ThumbnailDisplay)
+            };
 
-            var saveThumbnail = _fileStorage.Save(new StoredFile
+            foreach (var filename in filenames)
             {
-                Name = ImageName(tenantId, galleryName, imageName, "thumbnail"),
-                ContentType = MediaTypeNames.Image.Jpeg,
-                Stream = new ImageCompress(stream).Optimize(72, 48, quality: 20)
-            });
-
-            await Task.WhenAll(saveDefault, saveThumbnail);
+                await _fileStorage.Delete(filename);
+                _messageBroker.Publish(new ImageDeletedEvent(filename));
+            }
         }
 
-        private async Task SaveCoverSize(long tenantId, string galleryName, string imageName, Stream stream)
+        private async Task SaveStandard(long tenantId, string imageId, string gallery, Stream image)
         {
-            await _fileStorage.Save(new StoredFile
+            var storedFile = new StoredFile
             {
-                Name = ImageName(tenantId, galleryName, imageName, "cover"),
                 ContentType = MediaTypeNames.Image.Jpeg,
-                Stream = new ImageCompress(stream).Optimize(1920, 1280, quality: 90)
-            });
+                Name = Filename(tenantId, imageId, gallery, StandardDisplay),
+                Stream = new ImageCompress(image).Optimize(width: 720, height: 480, quality: 90)
+            };
+
+            await _fileStorage.Save(storedFile);
+
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
         }
 
-        private string ImageName(long tenantId, string galleryName, string imageName, string imageSize)
+        private async Task SaveThumbnail(long tenantId, string imageId, string gallery, Stream image)
         {
-            return $"{tenantId}-{imageName}.{galleryName}.{imageSize}.jpg";
+            var storedFile = new StoredFile
+            {
+                ContentType = MediaTypeNames.Image.Jpeg,
+                Name = Filename(tenantId, imageId, gallery, ThumbnailDisplay),
+                Stream = new ImageCompress(image).Optimize(width: 72, height: 48, quality: 20)
+            };
+
+            await _fileStorage.Save(storedFile);
+
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
+        }
+
+        private async Task SaveCover(long tenantId, string imageId, string gallery, Stream image)
+        {
+            var storedFile = new StoredFile
+            {
+                ContentType = MediaTypeNames.Image.Jpeg,
+                Name = Filename(tenantId, imageId, gallery, CoverDisplay),
+                Stream = new ImageCompress(image).Optimize(width: 1920, height: 1280, quality: 90)
+            };
+
+            await _fileStorage.Save(storedFile);
+
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
+        }
+
+        private string Filename(long tenantId, string imageId, string gallery, string display)
+        {
+            return $"{tenantId}-{imageId}.{gallery}.{display}.jpg";
         }
     }
 }

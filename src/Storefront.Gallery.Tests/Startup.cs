@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
 using Storefront.Gallery.API.Filters;
+using Storefront.Gallery.API.Models.EventModel.Subscribed.Menu;
+using Storefront.Gallery.API.Models.IntegrationModel.EventBus;
 using Storefront.Gallery.API.Models.IntegrationModel.FileStorage;
 using Storefront.Gallery.Tests.Fakes;
 
@@ -32,9 +34,24 @@ namespace Storefront.Gallery.Tests
             });
 
             services.AddDefaultCorsPolicy();
-            services.AddJwtAuthentication(_configuration.GetSection("Auth"));
+            services.AddJwtAuthentication(_configuration.GetSection("JWT"));
 
             services.AddSingleton<IFileStorage, FakeFileStorage>();
+            services.AddSingleton<IMessageBroker, FakeMessageBroker>();
+
+            services.AddScoped<ItemDeletedEvent>();
+            services.AddScoped<ItemGroupDeletedEvent>();
+
+            services.AddSingleton<EventBinding>(serviceProvider =>
+            {
+                var binding = new EventBinding();
+
+                binding.RoutingKey = "menu.*.deleted";
+                binding.Route<ItemDeletedEvent>("menu.item.deleted");
+                binding.Route<ItemGroupDeletedEvent>("menu.item-group.deleted");
+
+                return binding;
+            });
         }
 
         public void Configure(IApplicationBuilder app)
