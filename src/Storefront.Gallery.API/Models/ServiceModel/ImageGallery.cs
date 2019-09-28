@@ -14,12 +14,12 @@ namespace Storefront.Gallery.API.Models.ServiceModel
         public const string CoverDisplay = "cover";
 
         private readonly IFileStorage _fileStorage;
-        private readonly IEventBus _eventBus;
+        private readonly IMessageBroker _messageBroker;
 
-        public ImageGallery(IFileStorage fileStorage, IEventBus eventBus)
+        public ImageGallery(IFileStorage fileStorage, IMessageBroker messageBroker)
         {
             _fileStorage = fileStorage;
-            _eventBus = eventBus;
+            _messageBroker = messageBroker;
         }
 
         public StoredFile Image { get; private set; }
@@ -64,7 +64,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
             foreach (var filename in filenames)
             {
                 await _fileStorage.Delete(filename);
-                _eventBus.Publish(new ImageDeletedEvent(filename));
+                _messageBroker.Publish(new ImageDeletedEvent(filename));
             }
         }
 
@@ -79,7 +79,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
             await _fileStorage.Save(storedFile);
 
-            _eventBus.Publish(new ImageCreatedEvent(storedFile));
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
         }
 
         private async Task SaveThumbnail(long tenantId, string imageId, string gallery, Stream image)
@@ -93,7 +93,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
             await _fileStorage.Save(storedFile);
 
-            _eventBus.Publish(new ImageCreatedEvent(storedFile));
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
         }
 
         private async Task SaveCover(long tenantId, string imageId, string gallery, Stream image)
@@ -107,7 +107,7 @@ namespace Storefront.Gallery.API.Models.ServiceModel
 
             await _fileStorage.Save(storedFile);
 
-            _eventBus.Publish(new ImageCreatedEvent(storedFile));
+            _messageBroker.Publish(new ImageCreatedEvent(storedFile));
         }
 
         private string Filename(long tenantId, string imageId, string gallery, string display)

@@ -18,12 +18,12 @@ namespace Storefront.Gallery.API.Controllers
     public sealed class ImagesController : Controller
     {
         private readonly IFileStorage _fileStorage;
-        private readonly IEventBus _eventBus;
+        private readonly IMessageBroker _messageBroker;
 
-        public ImagesController(IFileStorage fileStorage, IEventBus eventBus)
+        public ImagesController(IFileStorage fileStorage, IMessageBroker messageBroker)
         {
             _fileStorage = fileStorage;
-            _eventBus = eventBus;
+            _messageBroker = messageBroker;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Storefront.Gallery.API.Controllers
             [FromRoute] string image, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
-            var imageGallery = new ImageGallery(_fileStorage, _eventBus);
+            var imageGallery = new ImageGallery(_fileStorage, _messageBroker);
 
             await imageGallery.Load(tenantId, image, gallery, display);
 
@@ -76,7 +76,7 @@ namespace Storefront.Gallery.API.Controllers
             [FromRoute] string gallery, [FromRoute] string image, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
-            var imageGallery = new ImageGallery(_fileStorage, _eventBus);
+            var imageGallery = new ImageGallery(_fileStorage, _messageBroker);
 
             using (var stream = new MemoryStream())
             {

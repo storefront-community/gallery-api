@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
@@ -15,25 +14,24 @@ using Sentry;
 namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
 {
     [ExcludeFromCodeCoverage]
-    public sealed class RabbitMQBroker : IEventBus, IHostedService
+    public sealed class RabbitMQBroker : IMessageBroker, IHostedService
     {
         private readonly RabbitMQOptions _options;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IDictionary<string, Type> _handlers;
+        private readonly EventBinding _eventBinding;
 
         private IConnection _connection;
         private IModel _channel;
 
-        public RabbitMQBroker(IOptions<RabbitMQOptions> options, IServiceProvider serviceProvider)
+        public RabbitMQBroker(IOptions<RabbitMQOptions> options, IServiceProvider serviceProvider,
+            EventBinding eventBinding)
         {
             _options = options.Value;
             _serviceProvider = serviceProvider;
-            _handlers = new Dictionary<string, Type>();
+            _eventBinding = eventBinding;
         }
 
-        public string RoutingKey { get; set; }
-
-        public void Publish(IEvent @event)
+        public void Publish<TPayload>(Event<TPayload> @event)
         {
             using (var channel = _connection.CreateModel())
             {
@@ -47,11 +45,6 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
                     basicProperties: null,
                     body: body);
             }
-        }
-
-        public void Subscribe<TEventHandler>(string name) where TEventHandler : IEventHandler
-        {
-            _handlers.Add(name, typeof(TEventHandler));
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -80,7 +73,7 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
                 autoDelete: false,
                 arguments: null);
 
-            _channel.QueueBind(_options.Queue, _options.Exchange, RoutingKey, arguments: null);
+            _channel.QueueBind(_options.Queue, _options.Exchange, _eventBinding.RoutingKey, arguments: null);
 
             var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.Received += HandleMessage;
@@ -104,14 +97,14 @@ namespace Storefront.Gallery.API.Models.IntegrationModel.EventBus.RabbitMQ
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var handlerType = default(Type);
+                    var type = _eventBinding.GetSubscriberType(args.RoutingKey);
 
-                    if (_handlers.TryGetValue(args.RoutingKey, out handlerType))
+                    if (type != null)
                     {
-                        var handler = ((IEventHandler)scope.ServiceProvider.GetRequiredService(handlerType));
+                        var subscriber = ((IEventSubscriber)scope.ServiceProvider.GetRequiredService(type));
                         var message = Encoding.UTF8.GetString(args.Body);
 
-                        await handler.Handle(message);
+                        await subscriber.Handle(message);
                     }
                 }
             }

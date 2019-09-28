@@ -13,7 +13,7 @@ namespace Storefront.Gallery.Tests.Fakes
         public FakeApiServer() : base(new Program().CreateWebHostBuilder()) { }
 
         public IHostingEnvironment Environment => Host.Services.GetService<IHostingEnvironment>();
-        public FakeEventBroker EventBus => Host.Services.GetService<IEventBus>() as FakeEventBroker;
+        public FakeMessageBroker EventBus => Host.Services.GetService<IMessageBroker>() as FakeMessageBroker;
         public FakeFileStorage FileStorage => Host.Services.GetService<IFileStorage>() as FakeFileStorage;
         public JwtOptions JwtOptions => Host.Services.GetService<IOptions<JwtOptions>>().Value;
     }

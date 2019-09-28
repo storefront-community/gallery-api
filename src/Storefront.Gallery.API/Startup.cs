@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Storefront.Gallery.API.Authorization;
 using Storefront.Gallery.API.Constraints;
 using Storefront.Gallery.API.Filters;
@@ -45,20 +44,20 @@ namespace Storefront.Gallery.API
             services.AddSwaggerDocumentation();
 
             services.AddScoped<IFileStorage, AmazonS3Bucket>();
+            services.AddScoped<IMessageBroker, RabbitMQBroker>();
 
             services.AddScoped<ItemDeletedEvent>();
             services.AddScoped<ItemGroupDeletedEvent>();
 
-            services.AddSingleton<IEventBus, RabbitMQBroker>(serviceProvider =>
+            services.AddSingleton<EventBinding>(serviceProvider =>
             {
-                var options = serviceProvider.GetRequiredService<IOptions<RabbitMQOptions>>();
-                var broker = new RabbitMQBroker(options, serviceProvider);
+                var binding = new EventBinding();
 
-                broker.RoutingKey = "menu.*.deleted";
-                broker.Subscribe<ItemDeletedEvent>("menu.item.deleted");
-                broker.Subscribe<ItemGroupDeletedEvent>("menu.item-group.deleted");
+                binding.RoutingKey = "menu.*.deleted";
+                binding.Route<ItemDeletedEvent>("menu.item.deleted");
+                binding.Route<ItemGroupDeletedEvent>("menu.item-group.deleted");
 
-                return broker;
+                return binding;
             });
 
             services.AddHostedService<RabbitMQBroker>();

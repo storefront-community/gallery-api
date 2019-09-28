@@ -6,21 +6,21 @@ using Storefront.Gallery.API.Models.ServiceModel;
 
 namespace Storefront.Gallery.API.Models.EventModel.Subscribed.Menu
 {
-    public sealed class ItemDeletedEvent : IEventHandler
+    public sealed class ItemDeletedEvent : IEventSubscriber
     {
         private readonly IFileStorage _fileStorage;
-        private readonly IEventBus _eventBus;
+        private readonly IMessageBroker _messageBroker;
 
-        public ItemDeletedEvent(IFileStorage fileStorage, IEventBus eventBus)
+        public ItemDeletedEvent(IFileStorage fileStorage, IMessageBroker messageBroker)
         {
             _fileStorage = fileStorage;
-            _eventBus = eventBus;
+            _messageBroker = messageBroker;
         }
 
         public async Task Handle(string message)
         {
             var json = JsonConvert.DeserializeObject<Event<ItemPayload>>(message);
-            var imageGallery = new ImageGallery(_fileStorage, _eventBus);
+            var imageGallery = new ImageGallery(_fileStorage, _messageBroker);
 
             await imageGallery.Delete(
                 tenantId: json.Payload.TenantId,
