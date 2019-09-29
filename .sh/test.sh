@@ -3,8 +3,8 @@
 set -e
 
 solution_dir="src"
-api_project_dir="Storefront.Gallery.API"
-test_project_dir="Storefront.Gallery.Tests"
+api_project_dir="StorefrontCommunity.Gallery.API"
+test_project_dir="StorefrontCommunity.Gallery.Tests"
 
 cd $solution_dir/$test_project_dir
 

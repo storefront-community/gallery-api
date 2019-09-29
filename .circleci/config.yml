@@ -14,9 +14,9 @@ jobs:
       - run: bash .sh/test.sh
       - run: curl -s https://codecov.io/bash > ./codecov
       - run: chmod +x ./codecov
-      - run: ./codecov -f "./src/Storefront.Gallery.Tests/coverage/opencover.xml" -t $CODECOV_TOKEN
+      - run: ./codecov -f "./src/StorefrontCommunity.Gallery.Tests/coverage/opencover.xml" -t $CODECOV_TOKEN
       - store_artifacts:
-          path: src/Storefront.Gallery.Tests/coverage/report/summary.htm
+          path: src/StorefrontCommunity.Gallery.Tests/coverage/report/summary.htm
           destination: coverage-report.htm
   deploy:
     <<: *default
