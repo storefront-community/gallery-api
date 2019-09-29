@@ -10,7 +10,7 @@ jobs:
       - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
       - run: sudo apt-get update
       - run: sudo apt-get install libgdiplus
-      - run: bash .sh/install.sh
+      - run: bash .sh/install-dotnet.sh
       - run: bash .sh/test.sh
       - run: curl -s https://codecov.io/bash > ./codecov
       - run: chmod +x ./codecov
@@ -22,7 +22,12 @@ jobs:
     <<: *default
     steps:
       - checkout
-      - run: echo "TODO> Build and push a Docker image"
+      - run: bash .sh/install-dotnet.sh
+      - run: bash .sh/install-docker.sh
+      - run: dotnet publish src -c release -o dist
+      - run: docker build -t storefront.community/api/gallery:${CIRCLE_TAG/v/} -f Dockerfile .
+      - run: docker login --username $DOCKER_USERNAME --password $DOCKER_TOKEN
+      - run: docker push storefront.community/api/gallery:${CIRCLE_TAG/v/}
 workflows:
   version: 2.1
   build_and_deploy:
