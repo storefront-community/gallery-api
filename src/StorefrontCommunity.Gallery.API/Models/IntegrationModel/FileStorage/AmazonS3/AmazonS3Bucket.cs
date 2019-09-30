@@ -32,6 +32,8 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
                 ContentType = file.ContentType
             };
 
+            file.Stream.Position = 0;
+
             request.InputStream = file.Stream;
 
             await _client.PutObjectAsync(request);
@@ -67,12 +69,7 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
 
                     memoryStream.Position = 0;
 
-                    return new StoredFile
-                    {
-                        Name = fileName,
-                        Stream = memoryStream,
-                        ContentType = response.Headers.ContentType
-                    };
+                    return new StoredFile(memoryStream, response.Headers.ContentType, fileName);
                 }
             }
             catch (AmazonS3Exception ex)

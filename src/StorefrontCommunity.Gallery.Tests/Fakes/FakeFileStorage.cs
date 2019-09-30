@@ -44,12 +44,7 @@ namespace StorefrontCommunity.Gallery.Tests.Fakes
 
             var bytes = await File.ReadAllBytesAsync(filePath);
 
-            return new StoredFile
-            {
-                Name = fileName,
-                ContentType = "image/jpeg",
-                Stream = new MemoryStream(bytes)
-            };
+            return new StoredFile(new MemoryStream(bytes), "image/jpeg", fileName);
         }
     }
 }

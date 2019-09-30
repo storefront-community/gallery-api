@@ -8,7 +8,7 @@ namespace StorefrontCommunity.Gallery.API.Models.EventModel.Published
         {
             Filename = storedFile.Name;
             ContentType = storedFile.ContentType;
-            Size = storedFile.Stream.Length;
+            Size = storedFile.Size;
         }
 
         public string Filename { get; set; }

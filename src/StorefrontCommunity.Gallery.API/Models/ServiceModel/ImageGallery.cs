@@ -70,12 +70,11 @@ namespace StorefrontCommunity.Gallery.API.Models.ServiceModel
 
         private async Task SaveStandard(long tenantId, string imageId, string gallery, Stream image)
         {
-            var storedFile = new StoredFile
-            {
-                ContentType = MediaTypeNames.Image.Jpeg,
-                Name = Filename(tenantId, imageId, gallery, StandardDisplay),
-                Stream = new ImageCompress(image).Optimize(width: 720, height: 480, quality: 90)
-            };
+            var storedFile = new StoredFile(
+                contentType: MediaTypeNames.Image.Jpeg,
+                name: Filename(tenantId, imageId, gallery, StandardDisplay),
+                stream: new ImageCompress(image).Optimize(width: 720, height: 480, quality: 90)
+            );
 
             await _fileStorage.Save(storedFile);
 
@@ -84,12 +83,11 @@ namespace StorefrontCommunity.Gallery.API.Models.ServiceModel
 
         private async Task SaveThumbnail(long tenantId, string imageId, string gallery, Stream image)
         {
-            var storedFile = new StoredFile
-            {
-                ContentType = MediaTypeNames.Image.Jpeg,
-                Name = Filename(tenantId, imageId, gallery, ThumbnailDisplay),
-                Stream = new ImageCompress(image).Optimize(width: 72, height: 48, quality: 20)
-            };
+            var storedFile = new StoredFile(
+                contentType: MediaTypeNames.Image.Jpeg,
+                name: Filename(tenantId, imageId, gallery, ThumbnailDisplay),
+                stream: new ImageCompress(image).Optimize(width: 72, height: 48, quality: 20)
+            );
 
             await _fileStorage.Save(storedFile);
 
@@ -98,12 +96,11 @@ namespace StorefrontCommunity.Gallery.API.Models.ServiceModel
 
         private async Task SaveCover(long tenantId, string imageId, string gallery, Stream image)
         {
-            var storedFile = new StoredFile
-            {
-                ContentType = MediaTypeNames.Image.Jpeg,
-                Name = Filename(tenantId, imageId, gallery, CoverDisplay),
-                Stream = new ImageCompress(image).Optimize(width: 1920, height: 1280, quality: 90)
-            };
+            var storedFile = new StoredFile(
+                contentType: MediaTypeNames.Image.Jpeg,
+                name: Filename(tenantId, imageId, gallery, CoverDisplay),
+                stream: new ImageCompress(image).Optimize(width: 1920, height: 1280, quality: 90)
+            );
 
             await _fileStorage.Save(storedFile);
 
