@@ -62,6 +62,8 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
 
                 await responseStream.CopyToAsync(memoryStream);
 
+                memoryStream.Position = 0;
+
                 return new StoredFile
                 {
                     Name = fileName,
