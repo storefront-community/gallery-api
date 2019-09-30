@@ -18,6 +18,7 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.EventBus.Rabbi
                 var connectionFactory = new ConnectionFactory()
                 {
                     Uri = new Uri(options.Value.Host),
+                    DispatchConsumersAsync = true,
                     AutomaticRecoveryEnabled = true
                 };
 
