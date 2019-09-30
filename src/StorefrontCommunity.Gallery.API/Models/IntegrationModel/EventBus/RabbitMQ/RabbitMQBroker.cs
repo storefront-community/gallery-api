@@ -55,8 +55,8 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.EventBus.Rabbi
             _channel.ExchangeDeclare(
                 exchange: _options.Exchange,
                 type: "topic",
-                durable: false,
-                autoDelete: true,
+                durable: true,
+                autoDelete: false,
                 arguments: null);
 
             _channel.QueueDeclare(
