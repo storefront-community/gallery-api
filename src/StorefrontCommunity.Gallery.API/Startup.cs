@@ -27,6 +27,7 @@ namespace StorefrontCommunity.Gallery.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AmazonS3Options>(_configuration.GetSection("AmazonS3"));
             services.Configure<RabbitMQOptions>(_configuration.GetSection("RabbitMQ"));
 
             services.AddMvc(options =>
