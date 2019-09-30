@@ -33,7 +33,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldRespond204AfterSaveSuccessfully(string gallery, string display)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/{display}";
+            var path = $"/{imageId}.{gallery}.{display}.jpg";
             var image = await File.ReadAllBytesAsync($"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg");
             var formData = new ImageFormData().Upload(image, "image/jpeg");
             var response = await _client.PutAsync(path, formData);
@@ -49,7 +49,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldSaveStandardAndGenerateThumbnail(string gallery, string contentType)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/standard";
+            var path = $"/{imageId}.{gallery}.standard.jpg";
             var image = await File.ReadAllBytesAsync($"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg");
             var formData = new ImageFormData().Upload(image, contentType);
             var response = await _client.PutAsync(path, formData);
@@ -68,7 +68,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldSaveCover(string gallery, string contentType)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/cover";
+            var path = $"/{imageId}.{gallery}.cover.jpg";
             var image = await File.ReadAllBytesAsync($"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg");
             var formData = new ImageFormData().Upload(image, contentType);
             var response = await _client.PutAsync(path, formData);
@@ -85,7 +85,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldAlwaysSaveJpeg(string gallery, string display)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/{display}";
+            var path = $"/{imageId}.{gallery}.{display}.jpg";
             var fixture = $"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg";
             var image = await File.ReadAllBytesAsync(fixture);
             var formData = new ImageFormData().Upload(image, "image/jpeg");
@@ -101,7 +101,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldPublishEventAfterSavingCover(string gallery)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/cover";
+            var path = $"/{imageId}.{gallery}.cover.jpg";
             var fixture = $"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg";
             var image = await File.ReadAllBytesAsync(fixture);
             var formData = new ImageFormData().Upload(image, "image/jpeg");
@@ -119,7 +119,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldPublishEventAfterSavingStandardAndThumbnail(string gallery)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/standard";
+            var path = $"/{imageId}.{gallery}.standard.jpg";
             var fixture = $"{_server.Environment.ContentRootPath}/Fixtures/upload.jpg";
             var image = await File.ReadAllBytesAsync(fixture);
             var formData = new ImageFormData().Upload(image, "image/jpeg");
@@ -142,7 +142,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldRespond404WhenTrySaveThumbnailDirectly(string gallery)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/thumbnail";
+            var path = $"/{imageId}.{gallery}.thumbnail.jpg";
             var image = new byte[Size5MB];
             var formData = new ImageFormData().Upload(image, "image/jpeg");
             var response = await _client.PutAsync(path, formData);
@@ -158,7 +158,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldRespond400ForUnacceptableContentType(string gallery, string display)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/{display}";
+            var path = $"/{imageId}.{gallery}.{display}.jpg";
             var image = new byte[Size5MB];
             var formData = new ImageFormData().Upload(image, "image/svg+xml");
             var response = await _client.PutAsync(path, formData);
@@ -176,7 +176,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldRespond400ForSizeExceeded(string gallery, string display)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/{display}";
+            var path = $"/{imageId}.{gallery}.{display}.jpg";
             var image = new byte[Size10MB];
             var formData = new ImageFormData().Upload(image, "image/jpeg");
             var response = await _client.PutAsync(path, formData);
@@ -192,7 +192,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         public async Task ShouldRespond404ForInvalidGallery(string gallery, string display)
         {
             var imageId = ConstantFactory.Id;
-            var path = $"/{gallery}/{imageId}/{display}";
+            var path = $"/{imageId}.{gallery}.{display}.jpg";
             var image = new byte[Size5MB];
             var formData = new ImageFormData().Upload(image, "image/jpeg");
             var response = await _client.PutAsync(path, formData);
