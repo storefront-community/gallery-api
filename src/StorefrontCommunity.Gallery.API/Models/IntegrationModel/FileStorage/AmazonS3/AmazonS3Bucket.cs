@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
@@ -55,21 +56,33 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
                 Key = fileName
             };
 
-            using (var response = await _client.GetObjectAsync(request))
-            using (var responseStream = response.ResponseStream)
+            try
             {
-                var memoryStream = new MemoryStream();
-
-                await responseStream.CopyToAsync(memoryStream);
-
-                memoryStream.Position = 0;
-
-                return new StoredFile
+                using (var response = await _client.GetObjectAsync(request))
+                using (var responseStream = response.ResponseStream)
                 {
-                    Name = fileName,
-                    Stream = memoryStream,
-                    ContentType = response.Headers.ContentType
-                };
+                    var memoryStream = new MemoryStream();
+
+                    await responseStream.CopyToAsync(memoryStream);
+
+                    memoryStream.Position = 0;
+
+                    return new StoredFile
+                    {
+                        Name = fileName,
+                        Stream = memoryStream,
+                        ContentType = response.Headers.ContentType
+                    };
+                }
+            }
+            catch (AmazonS3Exception ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
             }
         }
     }
