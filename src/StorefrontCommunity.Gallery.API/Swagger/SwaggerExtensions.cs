@@ -48,7 +48,7 @@ namespace StorefrontCommunity.Gallery.API.Swagger
             app.UseSwagger();
             app.UseSwaggerUI(setup =>
             {
-                setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Menu API");
+                setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Gallery API");
                 setup.DefaultModelsExpandDepth(-1);
                 setup.DocExpansion(DocExpansion.List);
                 setup.DocumentTitle = "Storefront Community";
