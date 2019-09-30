@@ -1,9 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.Extensions.Options;
 
 namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.AmazonS3
 {
@@ -13,9 +15,9 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
         private readonly AmazonS3Options _options;
         private readonly AmazonS3Client _client;
 
-        public AmazonS3Bucket(AmazonS3Options options)
+        public AmazonS3Bucket(IOptions<AmazonS3Options> options)
         {
-            _options = options;
+            _options = options.Value;
 
             var region = RegionEndpoint.GetBySystemName(_options.Region);
             _client = new AmazonS3Client(_options.AccessKeyId, _options.SecretAccessKey, region);
@@ -54,19 +56,33 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage.Am
                 Key = fileName
             };
 
-            using (var response = await _client.GetObjectAsync(request))
-            using (var responseStream = response.ResponseStream)
+            try
             {
-                var memoryStream = new MemoryStream();
-
-                await responseStream.CopyToAsync(memoryStream);
-
-                return new StoredFile
+                using (var response = await _client.GetObjectAsync(request))
+                using (var responseStream = response.ResponseStream)
                 {
-                    Name = fileName,
-                    Stream = memoryStream,
-                    ContentType = response.Headers.ContentType
-                };
+                    var memoryStream = new MemoryStream();
+
+                    await responseStream.CopyToAsync(memoryStream);
+
+                    memoryStream.Position = 0;
+
+                    return new StoredFile
+                    {
+                        Name = fileName,
+                        Stream = memoryStream,
+                        ContentType = response.Headers.ContentType
+                    };
+                }
+            }
+            catch (AmazonS3Exception ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
             }
         }
     }
