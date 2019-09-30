@@ -22,6 +22,8 @@ namespace StorefrontCommunity.Gallery.API.Swagger
                     Version = "v1"
                 });
 
+                options.DocumentFilter<SecurityRequirementsFilter>();
+
                 options.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT authorization header using the Bearer scheme. Example: Bearer <TOKEN>",
