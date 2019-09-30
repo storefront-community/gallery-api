@@ -4,8 +4,17 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.FileStorage
 {
     public sealed class StoredFile
     {
-        public string Name { get; set; }
-        public string ContentType { get; set; }
-        public Stream Stream { get; set; }
+        public StoredFile(Stream stream, string contentType, string name)
+        {
+            Name = name;
+            ContentType = contentType;
+            Stream = stream;
+            Size = stream.Length;
+        }
+
+        public string Name { get; }
+        public string ContentType { get; }
+        public Stream Stream { get; }
+        public long Size { get; }
     }
 }
