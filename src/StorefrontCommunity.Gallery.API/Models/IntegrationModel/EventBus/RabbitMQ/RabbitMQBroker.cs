@@ -19,14 +19,15 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.EventBus.Rabbi
         private readonly RabbitMQOptions _options;
         private readonly IServiceProvider _serviceProvider;
         private readonly EventBinding _eventBinding;
+        private readonly IConnection _connection;
 
-        private IConnection _connection;
         private IModel _channel;
 
-        public RabbitMQBroker(IOptions<RabbitMQOptions> options, IServiceProvider serviceProvider,
-            EventBinding eventBinding)
+        public RabbitMQBroker(IOptions<RabbitMQOptions> options, IConnection connection,
+            IServiceProvider serviceProvider, EventBinding eventBinding)
         {
             _options = options.Value;
+            _connection = connection;
             _serviceProvider = serviceProvider;
             _eventBinding = eventBinding;
         }
@@ -49,14 +50,6 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.EventBus.Rabbi
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var connectionFactory = new ConnectionFactory()
-            {
-                Uri = new Uri(_options.Host),
-                AutomaticRecoveryEnabled = true
-            };
-
-            _connection = connectionFactory.CreateConnection();
-
             _channel = _connection.CreateModel();
 
             _channel.ExchangeDeclare(
@@ -86,7 +79,7 @@ namespace StorefrontCommunity.Gallery.API.Models.IntegrationModel.EventBus.Rabbi
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _channel?.Close();
-            _connection?.Close();
+            _connection.Close();
 
             return Task.CompletedTask;
         }

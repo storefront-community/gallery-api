@@ -43,6 +43,7 @@ namespace StorefrontCommunity.Gallery.API
             services.AddDefaultCorsPolicy();
             services.AddJwtAuthentication(_configuration.GetSection("JWT"));
             services.AddSwaggerDocumentation();
+            services.AddRabbitMQConnection();
 
             services.AddScoped<IFileStorage, AmazonS3Bucket>();
             services.AddScoped<IMessageBroker, RabbitMQBroker>();
