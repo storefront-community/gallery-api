@@ -31,7 +31,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         [InlineData("item-group", "cover")]
         public async Task ShouldRespond200(string gallery, string display)
         {
-            var path = $"/{gallery}/{ImageId}/{display}";
+            var path = $"/{ImageId}.{gallery}.{display}.jpg";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -46,7 +46,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         [InlineData("item-group", "cover")]
         public async Task ShouldAlwaysRespondInJpegFormat(string gallery, string display)
         {
-            var path = $"/{gallery}/{ImageId}/{display}";
+            var path = $"/{ImageId}.{gallery}.{display}.jpg";
             var response = await _client.GetAsync(path);
 
             Assert.Equal("image/jpeg", response.Content.Headers.ContentType.MediaType);
@@ -61,7 +61,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         [InlineData("item-group", "thumbnail", "e0b92beb7c005e1fce6bebcf9bf15957")]
         public async Task ShouldGetRequestedSize(string gallery, string display, string checksum)
         {
-            var path = $"/{gallery}/{ImageId}/{display}";
+            var path = $"/{ImageId}.{gallery}.{display}.jpg";
             var response = await _client.GetAsync(path);
             var image = await response.Content.ReadAsStreamAsync();
 
@@ -77,7 +77,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         [InlineData("item-group", "cover")]
         public async Task ShouldRespond404IfImageDoesNotExist(string gallery, string display)
         {
-            var path = $"/{gallery}/909/{display}";
+            var path = $"/909.{gallery}.{display}.jpg";
             var response = await _client.GetAsync(path);
             var jsonResponse = await _client.ReadAsJsonAsync<ImageNotFoundError>(response);
 
@@ -90,7 +90,7 @@ namespace StorefrontCommunity.Gallery.Tests.Functional
         [InlineData("item-group")]
         public async Task ShouldRespond404ForInvalidSizeName(string gallery)
         {
-            var path = $"/{gallery}/{ImageId}/nondisplay";
+            var path = $"/{ImageId}.{gallery}.nondisplay.jpg";
             var response = await _client.GetAsync(path);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

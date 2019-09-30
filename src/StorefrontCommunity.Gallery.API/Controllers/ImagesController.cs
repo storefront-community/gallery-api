@@ -13,7 +13,7 @@ namespace StorefrontCommunity.Gallery.API.Controllers
     /// <summary>
     /// Collection of images.
     /// </summary>
-    [Route("{gallery:gallery}/{image}"), Authorize]
+    [Authorize]
     [ApiExplorerSettings(GroupName = "Images")]
     public sealed class ImagesController : Controller
     {
@@ -27,7 +27,7 @@ namespace StorefrontCommunity.Gallery.API.Controllers
         }
 
         /// <summary>
-        /// Get image in JPEG format.
+        /// Get image in JPG format.
         /// </summary>
         /// <param name="gallery">Gallery name: **item** or **item-group**.</param>
         /// <param name="image">Image ID (or name). Represented by the item ID or group item ID.</param>
@@ -37,12 +37,12 @@ namespace StorefrontCommunity.Gallery.API.Controllers
         /// <returns>Returns a image.</returns>
         /// <response code="200">Image file.</response>
         /// <response code="404">Error: IMAGE_NOT_FOUND</response>
-        [HttpGet, Route("{display:regex(^(standard|cover|thumbnail)$)}")]
+        [HttpGet, Route("{image}.{gallery:gallery}.{display:regex(^(standard|cover|thumbnail)$)}.jpg")]
         [Produces("image/jpeg")]
         [ProducesResponseType(statusCode: 200)]
         [ProducesResponseType(statusCode: 404, type: typeof(ImageNotFoundError))]
-        public async Task<IActionResult> Get([FromRoute] string gallery,
-            [FromRoute] string image, [FromRoute] string display)
+        public async Task<IActionResult> Get([FromRoute] string image,
+            [FromRoute] string gallery, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
             var imageGallery = new ImageGallery(_fileStorage, _messageBroker);
@@ -58,22 +58,22 @@ namespace StorefrontCommunity.Gallery.API.Controllers
         }
 
         /// <summary>
-        /// Add or update image. Supports JPEG and PNG only.
+        /// Add or update image. Supports JPG and PNG only.
         /// </summary>
         /// <param name="formData">Uploaded image using FormData.</param>
         /// <param name="gallery">Gallery name: **item** or **item-group**.</param>
         /// <param name="image">Image ID (or name). Represented by the item ID or group item ID.</param>
         /// <param name="display">
         /// Image display size: **standard** (720x480) or **cover** (1920x1280).
-        /// The image will be resized and converted to JPEG at 72 DPI.
+        /// The image will be resized and converted to JPG at 72 DPI.
         /// </param>
         /// <returns>No content.</returns>
         /// <response code="204">Image has been added or updated.</response>
-        [HttpPut, Route("{display:regex(^(standard|cover)$)}")]
+        [HttpPut, Route("{image}.{gallery:gallery}.{display:regex(^(standard|cover)$)}.jpg")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(statusCode: 204)]
         public async Task<IActionResult> Save([FromForm] ImageFormData formData,
-            [FromRoute] string gallery, [FromRoute] string image, [FromRoute] string display)
+            [FromRoute] string image, [FromRoute] string gallery, [FromRoute] string display)
         {
             var tenantId = User.Claims.TenantId();
             var imageGallery = new ImageGallery(_fileStorage, _messageBroker);
